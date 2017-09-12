@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>aljaff94.PortHotel</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Ahmed Amer Aljaff</authors>
+    <owners>Ahmed Amer Aljaff</owners>
+    <projectUrl>https://github.com/aljaff94/PortHotel</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A free util to create a port forwarding and ssl certificate</description>
+    <releaseNotes>For personal use only</releaseNotes>
+    <copyright>Copyright(C) Ahmed Amer Aljaff, 2017</copyright>
+    <tags>ssl port hosts</tags>
+  </metadata>
+</package>
