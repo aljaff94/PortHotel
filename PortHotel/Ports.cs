@@ -23,8 +23,8 @@ namespace PortHotel
                 while (true)
                 {
                     ps.AddScript($"(netstat -an | where{{$_.Contains(\"{startPort}\"){listening}}}).count");
-                    var result = (int)ps.Invoke()[0].BaseObject;
-                    if (result == 0)
+                    var result = (ps.Invoke()?[0]?.BaseObject) as int?;
+                    if (result == null || result == 0)
                         return startPort;
                     startPort++;
                 }
@@ -44,8 +44,8 @@ namespace PortHotel
                 while (true)
                 {
                     ps.AddScript($"(netsh interface portproxy show v4tov4 | where{{$_.Contains(\"{startIp}\")}}).count");
-                    var result = (int)ps.Invoke()[0].BaseObject;
-                    if (result == 0)
+                    var result = (ps.Invoke()?[0]?.BaseObject) as int?;
+                    if (result == null || result == 0)
                         return startIp;
 
                     ipBytes[3]++;
