@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace PortHotel
 {
-
     public static class X509Certificates
     {
-        const string newCertificatePSCommand = "cert=New-SelfSignedCertificate -DnsName \"{0}\" -FriendlyName \"{1}\" -Subject \"{2}\" -KeyUsage DigitalSignature -KeyAlgorithm RSA -KeyLength 2048 -CertStoreLocation \"cert:\\LocalMachine\\My\"",
+        const string newCertificatePSCommand = "$cert=New-SelfSignedCertificate -DnsName \"{0}\" -FriendlyName \"{1}\" -Subject \"{2}\" -KeyUsage DigitalSignature -KeyAlgorithm RSA -KeyLength 2048 -CertStoreLocation \"cert:\\LocalMachine\\My\"",
             storeLocation = "$store = new-object System.Security.Cryptography.X509Certificates.X509Store([System.Security.Cryptography.X509Certificates.StoreName]::{0},\"localmachine\")",
             openStore = "$store.Open(\"MaxAllowed\")",
             closeStore = "$store.Close()",
@@ -26,7 +25,7 @@ namespace PortHotel
         public static string NewX509Certificate(string dnsName, string fiendlyName, string subject)
         {
             string thumbprint;
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript(String.Format(newCertificatePSCommand, dnsName, fiendlyName, subject));
                 ps.AddScript(String.Format(storeLocation, "Root"));
@@ -34,7 +33,7 @@ namespace PortHotel
                 ps.AddScript(addCertificate);
                 ps.AddScript(closeStore);
                 ps.AddScript(getCertThumbprint);
-
+                
                 thumbprint = ps.Invoke()?[0]?.BaseObject?.ToString();
             }
             return thumbprint;
@@ -45,7 +44,7 @@ namespace PortHotel
         /// <param name="thumbprint">Certificate thumbprint</param>
         public static void RemoveX509Certificate(string thumbprint)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 void addScript(string location)
                 {
@@ -70,7 +69,7 @@ namespace PortHotel
         /// </summary>
         public static bool InsertSslCert(string ip, uint port, string thumbprint, string guid)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh http add sslcert ipport={ip}:{port} certhash={thumbprint} appid='{{{guid.ToUpper()}}}'");
                 if(ps.Invoke()?[1].BaseObject?.ToString() == "SSL Certificate successfully added")
@@ -84,7 +83,7 @@ namespace PortHotel
         /// </summary>
         public static bool InsertSslCert(uint port, string domain, string thumbprint, string guid)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh http add sslcert hostnameport={domain}:{port} certhash={thumbprint} appid='{{{guid.ToUpper()}}}' certstorename=my");
                 if (ps.Invoke()?[1].BaseObject?.ToString() == "SSL Certificate successfully added")
@@ -98,7 +97,7 @@ namespace PortHotel
         /// </summary>
         public static void RemoveCertificate(string ip, uint port)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh http delete sslcert ipport={ip}:{port}");
                 ps.Invoke();
@@ -109,7 +108,7 @@ namespace PortHotel
         /// </summary>
         public static void RemoveCertificate(uint port, string domain)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh http delete sslcert hostnameport={domain}:{port}");
                 ps.Invoke();

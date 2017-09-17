@@ -18,7 +18,7 @@ namespace PortHotel
         public static int PeekAvailablePort(int startPort = 1002, bool scanListeningOnly = false)
         {
             var listening = scanListeningOnly ? " -and $_.Contains(\"LISTENING\")" : null;
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 while (true)
                 {
@@ -39,7 +39,7 @@ namespace PortHotel
         public static string PeekAvailableIP(string startIp = "127.28.2.11")
         {
             var ipBytes = startIp.Split('.').Select<string, uint>(f => uint.Parse(f)).ToArray();
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 while (true)
                 {
@@ -72,7 +72,7 @@ namespace PortHotel
         /// <param name="connectAddress"></param>
         public static void AddPortForward(string listenAddress, string listenPort, string connectPort, string connectAddress)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh interface portproxy add v4tov4 listenport={listenPort} listenaddress={listenAddress} connectport={connectPort} connectaddress={connectAddress}");
                 ps.Invoke();
@@ -85,7 +85,7 @@ namespace PortHotel
         /// <param name="listenAddress"></param>
         public static void DeletePortForward(string listenAddress, string listenPort)
         {
-            using (var ps = PowerShell.Create(RunspaceMode.NewRunspace))
+            using (var ps = PowerShell.Create())
             {
                 ps.AddScript($"netsh interface portproxy delete v4tov4 listenport={listenPort} " +
                         $"listenaddress={listenAddress} ");
